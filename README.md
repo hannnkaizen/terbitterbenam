@@ -43,7 +43,7 @@ The script will attempt to install these automatically via winget if missing:
 
 ## ⬇️ How to Install
 1. You need git to download the program. Run cmd (windows + R) then cmd, hit enter. Install git by run this command.
-> winget install -e --id Gyan.FFmpeg --exact
+> winget install --id Git.Git -e --source winget
 
 2. Once the git has installed, clone this repository to your local pc
 > git clone https://github.com/hannnkaizen/terbitterbenam.git
