@@ -6,21 +6,48 @@ setlocal enabledelayedexpansion
 :: Location of the project folder (change this to your actual path)
 set "LOCATION=D:\TITIPAN_KITA\RAIHAN\Git\terbitterbenam"
 
-:: Get the directory where this batch file is located (includes trailing backslash)
-set "SCRIPT_DIR=%~dp0"
-
 :: Convert backslashes to forward slashes for ImageMagick to prevent escape character issues (\T, \R)
 set "FONT_DIR=%LOCATION%\Fonts"
 set "FONT_DIR=%FONT_DIR:\=/%/"
 set "FONT_BODY=%FONT_DIR%Poppins-Regular.ttf"
 set "FONT_HEADER=%FONT_DIR%Poppins-Bold.ttf" 
 
-:: --- I. Processing Data From MICA in a year ---
-
 :: Set your input and output folder locations
 set "INPUT_DIR=%LOCATION%\Source"
 set "ASSETS_DIR=%LOCATION%\Assets"
 set "OUTPUT_DIR=%LOCATION%\Output"
+
+:: --- 0. Check for FFmpeg and ImageMagick ---
+
+:: 1. Check for ImageMagick
+winget list --id ImageMagick.ImageMagick >nul 2>&1
+if %errorlevel% equ 0 (
+    echo [FOUND] ImageMagick is installed.
+    goto :CHECK_FFMPEG
+) else (
+    :: This acts as our "elif/else" abort trigger
+    set "MISSING_APP=ImageMagick"
+    goto :ABORT_BATCH
+)
+
+:CHECK_FFMPEG
+:: 2. Check for Gyan.FFmpeg
+winget list --id Gyan.FFmpeg >nul 2>&1
+if %errorlevel% equ 0 (
+    echo [FOUND] Gyan.FFmpeg is installed.
+    goto :PROCEED_NEXT
+) else (
+    set "MISSING_APP=Gyan.FFmpeg"
+    goto :ABORT_BATCH
+)
+
+:PROCEED_NEXT
+echo =======================================================================================================================
+echo [0/6] All requirements met. Starting next program...
+echo =======================================================================================================================
+echo Running next steps...
+
+:: --- I. Processing Data From MICA in a year ---
 
 :: Change directory to the input folder safely
 cd /d "%INPUT_DIR%"
@@ -200,3 +227,12 @@ echo [6/6] Cleaned up temporary files! Your final video is ready in the output f
 echo =======================================================================================================================
 
 pause
+exit /b
+
+:ABORT_BATCH
+echo --------------------------------------------------
+echo [ERROR] Required application "!MISSING_APP!" was not found.
+echo Aborting the batch script.
+echo --------------------------------------------------
+pause
+exit /b
