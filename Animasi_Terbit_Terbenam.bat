@@ -26,8 +26,8 @@ if %errorlevel% equ 0 (
     goto :CHECK_FFMPEG
 ) else (
     :: This acts as our "elif/else" abort trigger
-    set "MISSING_APP=ImageMagick"
-    goto :ABORT_BATCH
+    winget install ImageMagick.Q16 --exact --accept-source-agreements --accept-package-agreements
+    goto :CHECK_FFMPEG
 )
 
 :CHECK_FFMPEG
@@ -37,8 +37,8 @@ if %errorlevel% equ 0 (
     echo [FOUND] Gyan.FFmpeg is installed.
     goto :PROCEED_NEXT
 ) else (
-    set "MISSING_APP=Gyan.FFmpeg"
-    goto :ABORT_BATCH
+    winget install -e --id Gyan.FFmpeg --exact --accept-source-agreements --accept-package-agreements
+    goto :PROCEED_NEXT
 )
 
 :PROCEED_NEXT
