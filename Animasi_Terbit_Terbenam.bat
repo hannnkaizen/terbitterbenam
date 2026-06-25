@@ -105,11 +105,25 @@ echo ===========================================================================
 
 :: --- III. Generate Images as Cover ---
 
-:: 1. Use PowerShell to calculate the 7-day range and translate it to Indonesian
+:: 1. Use PowerShell to calculate the 7-day range, translate it to Indonesian, and get the month number
 echo Calculating dates for %SEARCH_WORD%...
-for /f "delims=" %%I in ('powershell -NoProfile -Command "$inputDate = '%SEARCH_WORD%'; $parts = $inputDate.Split(','); $dateStr = $parts[1] + ' ' + $parts[0] + ' ' + (Get-Date).Year; $start = [datetime]$dateStr; $end = $start.AddDays(6); $culture = [System.Globalization.CultureInfo]::CreateSpecificCulture('id-ID'); $out = $start.ToString('dd MMMM yyyy', $culture) + ' - ' + $end.ToString('dd MMMM yyyy', $culture); Write-Host $out"') do (
+
+for /f "tokens=1,2 delims=|" %%I in ('powershell -NoProfile -Command "$inputDate = '%SEARCH_WORD%'; $parts = $inputDate.Split(','); $dateStr = $parts[1] + ' ' + $parts[0] + ' ' + (Get-Date).Year; $start = [datetime]$dateStr; $end = $start.AddDays(6); $culture = [System.Globalization.CultureInfo]::CreateSpecificCulture('id-ID'); $out = $start.ToString('dd MMMM yyyy', $culture) + ' - ' + $end.ToString('dd MMMM yyyy', $culture); $monthNum = $start.Month; Write-Host ($out + '|' + $monthNum)"') do (
     set "DATE_TEXT=%%I"
+    set "MONTH_NUM=%%J"
 )
+
+:: 2. Calculate if the month is odd (ganjil) or even (genap)
+set /a "modulo=MONTH_NUM %% 2"
+
+if %modulo% equ 1 (
+    set "BASE_VIDEO=base_ganjil"
+) else (
+    set "BASE_VIDEO=base_genap"
+)
+
+:: Verify it works
+echo Variable BASE_VIDEO is set to: %BASE_VIDEO%
 
 echo Text to print: !DATE_TEXT!
 
@@ -207,7 +221,7 @@ set "FILTER_FILE=%LOCATION%/Config/filters.txt"
 set "FILTER_FILE=!FILTER_FILE:\=/!"
 
 :: Define inputs (Base video is assumed to be in INPUT_DIR)
-set BASE=-i "%ASSETS_DIR%\base.mp4"
+set BASE=-i "%ASSETS_DIR%\%BASE_VIDEO%.mp4"
 
 :: Define images (Pointed to OUTPUT_DIR where they were just generated)
 set IMAGES=-loop 1 -i "%OUTPUT_DIR%\cover_temp.png" -loop 1 -i "%OUTPUT_DIR%\cover_temp.png" -loop 1 -i "%OUTPUT_DIR%\Maritaing_temp1.png" -loop 1 -i "%OUTPUT_DIR%\Kalabahi_temp1.png" -loop 1 -i "%OUTPUT_DIR%\Kabir_temp1.png" -loop 1 -i "%OUTPUT_DIR%\Lewoleba_temp1.png" -loop 1 -i "%OUTPUT_DIR%\Larantuka_temp1.png"
