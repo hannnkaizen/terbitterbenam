@@ -44,7 +44,6 @@ if %errorlevel% equ 0 (
     goto :PROCEED_NEXT
 ) else (
     echo [INSTALLING] Gyan.FFmpeg not found. Installing now...
-    :: REMOVED custom --location to prevent "Access is denied" on portable extraction
     winget install --id Gyan.FFmpeg --exact --accept-source-agreements --accept-package-agreements --silent
     goto :PROCEED_NEXT
 )
@@ -56,14 +55,40 @@ echo ===========================================================================
 echo Running next steps...
 
 :: -------------------------------------------------------------------------
-:: HOW THE TOOLS ARE LOCATED DYNAMICALLY:
+:: DYNAMICALLY LOCATE THE TOOLS FOR A NEW PC (WITHOUT USING %PATH%)
 :: -------------------------------------------------------------------------
 
-:: For FFmpeg (Default portable fallback mapping):
-set "FFMPEG_CMD=%WINGET_LINKS_DIR%\ffmpeg.exe"
+:: 1. Dynamically locate FFmpeg inside the WinGet Packages directory
+set "FFMPEG_CMD="
+for /d %%D in ("%USERPROFILE%\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg*") do (
+    if exist "%%D\bin\ffmpeg.exe" (
+        set "FFMPEG_CMD=%%D\bin\ffmpeg.exe"
+    )
+)
 
-:: For ImageMagick (Native machine path):
-for /d %%D in ("%PROGRAM_FILES_DIR%\ImageMagick*") do set "MAGICK_CMD=%%D\magick.exe"
+:: 2. Dynamically locate ImageMagick inside Program Files
+set "MAGICK_CMD="
+for /d %%D in ("%ProgramFiles%\ImageMagick*") do (
+    if exist "%%D\magick.exe" (
+        set "MAGICK_CMD=%%D\magick.exe"
+    )
+)
+
+:: --- CRITICAL FAILSAFE ---
+:: If the dynamic path resolution fails, fall back to basic global calls
+if "!FFMPEG_CMD!"=="" (
+    echo [WARNING] Dynamic FFmpeg path failed. Falling back to system global.
+    set "FFMPEG_CMD=ffmpeg.exe"
+)
+if "!MAGICK_CMD!"=="" (
+    echo [WARNING] Dynamic ImageMagick path failed. Falling back to system global.
+    set "MAGICK_CMD=magick.exe"
+)
+
+echo --------------------------------------------------
+echo Verified FFmpeg Executive: "!FFMPEG_CMD!"
+echo Verified ImageMagick Exec: "!MAGICK_CMD!"
+echo --------------------------------------------------
 
 :: --- I. Processing Data From MICA in a year ---
 
