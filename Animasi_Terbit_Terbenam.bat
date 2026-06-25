@@ -2,7 +2,6 @@
 setlocal enabledelayedexpansion
 
 :: This program was created by Gemini 3 and assembled by rhh to enhance the operations of Stasiun Geofisika Alor.
-
 :: Location of the project folder (change this to your actual path)
 set "LOCATION=%~dp0"
 
@@ -30,6 +29,7 @@ if %errorlevel% equ 0 (
     goto :CHECK_FFMPEG
 ) else (
     echo [INSTALLING] ImageMagick not found. Installing now...
+    :: FIXED: Combined onto a single line so it executes correctly
     winget install --id ImageMagick.ImageMagick --exact --accept-source-agreements --accept-package-agreements --silent
     goto :CHECK_FFMPEG
 )
@@ -63,17 +63,6 @@ set "FFMPEG_CMD=%WINGET_LINKS_DIR%\ffmpeg.exe"
 :: For ImageMagick (typically installs to Program Files):
 :: We search the directory dynamically for the executable name to ignore version numbers
 for /d %%D in ("%PROGRAM_FILES_DIR%\ImageMagick*") do set "MAGICK_CMD=%%D\magick.exe"
-
-:: --- Example Usage ---
-:: Instead of writing: ffmpeg -i input.mp4 output.mp3
-:: You will write:    "!FFMPEG_CMD!" -i input.mp4 output.mp3
-
-:: Instead of writing: magick input.png output.jpg
-:: You will write:    "!MAGICK_CMD!" input.png output.jpg
-
-echo Testing paths...
-echo FFmpeg Location: "!FFMPEG_CMD!"
-echo ImageMagick Location: "!MAGICK_CMD!"
 
 :: --- I. Processing Data From MICA in a year ---
 
@@ -155,10 +144,9 @@ if %modulo% equ 1 (
 echo Variable BASE_VIDEO is set to: %BASE_VIDEO%
 
 echo Text to print: !DATE_TEXT!
-
 :: 3. Run the ImageMagick command (Saved to OUTPUT_DIR)
 echo Generating image...
-magick -size 1080x1080 canvas:transparent -font "%FONT_HEADER%" -pointsize 45 -gravity center -fill #fac016 -annotate 0x0+45+50 "!DATE_TEXT!" "%OUTPUT_DIR%\cover_temp.png"
+"!MAGICK_CMD!" -size 1080x1080 canvas:transparent -font "%FONT_HEADER%" -pointsize 45 -gravity center -fill #fac016 -annotate 0x0+45+50 "!DATE_TEXT!" "%OUTPUT_DIR%\cover_temp.png"
 
 echo =======================================================================================================================
 echo [3/6] Generated cover.png and calculated dates successfully! Now generating content images for each CSV file...
@@ -209,7 +197,8 @@ for %%F in ("%OUTPUT_DIR%\*_temp1.csv") do (
     set /a "Y1=Pos1", "Y2=Pos1+dv", "Y3=Pos1+dv*2", "Y4=Pos1+dv*3", "Y5=Pos1+dv*4", "Y6=Pos1+dv*5", "Y7=Pos1+dv*6"
 
     echo Generating image for %%F...
-    magick -size 1080x1080 canvas:transparent -pointsize 24 -gravity center -fill #141414 ^
+    :: FIXED: Replaced standard "magick" with local variable absolute path "!MAGICK_CMD!" [cite: 7, 24]
+    "!MAGICK_CMD!" -size 1080x1080 canvas:transparent -pointsize 24 -gravity center -fill #141414 ^
         -font "%FONT_BODY%" -annotate 0x0-160+!Y1! "!DATE_1!" ^
         -font "%FONT_BODY%" -annotate 0x0-160+!Y2! "!DATE_2!" ^
         -font "%FONT_BODY%" -annotate 0x0-160+!Y3! "!DATE_3!" ^
@@ -248,7 +237,6 @@ echo Starting FFmpeg process...
 :: Absolute path for filters.txt using forward slashes (required by FFmpeg's filter engine)
 set "FILTER_FILE=%LOCATION%/Config/filters.txt"
 set "FILTER_FILE=!FILTER_FILE:\=/!"
-
 :: Define inputs (Base video is assumed to be in INPUT_DIR)
 set BASE=-i "%ASSETS_DIR%\%BASE_VIDEO%.mp4"
 
