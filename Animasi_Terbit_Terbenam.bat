@@ -1,8 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: This program was created by Gemini 3 and assembled by rhh to enhance the operations of Stasiun Geofisika Alor.
-
 :: Get the directory where this batch file is located (includes trailing backslash)
 set "SCRIPT_DIR=%~dp0"
 :: Convert backslashes to forward slashes for ImageMagick to prevent escape character issues (\T, \R)
