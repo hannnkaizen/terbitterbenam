@@ -30,7 +30,7 @@ if %errorlevel% equ 0 (
 ) else (
     echo [INSTALLING] ImageMagick not found. Installing now...
     :: FIXED: Combined onto a single line so it executes correctly
-    winget install --id ImageMagick.ImageMagick --exact --accept-source-agreements --accept-package-agreements --silent
+    winget install --id ImageMagick.ImageMagick
     goto :CHECK_FFMPEG
 )
 
@@ -42,7 +42,7 @@ if %errorlevel% equ 0 (
     goto :PROCEED_NEXT
 ) else (
     echo [INSTALLING] Gyan.FFmpeg not found. Installing now...
-    winget install --id Gyan.FFmpeg --exact --accept-source-agreements --accept-package-agreements --silent
+    winget install --id Gyan.FFmpeg
     goto :PROCEED_NEXT
 )
 
