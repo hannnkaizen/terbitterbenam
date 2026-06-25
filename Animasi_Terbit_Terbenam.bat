@@ -18,6 +18,9 @@ set "OUTPUT_DIR=%LOCATION%\Output"
 
 :: --- 0. Check for FFmpeg and ImageMagick ---
 
+:: Fix for the database lock error: Clear any stuck winget processes
+taskkill /f /im winget.exe >nul 2>&1
+
 :: Define standard winget/Windows execution folders directly
 set "WINGET_LINKS_DIR=%USERPROFILE%\AppData\Local\Microsoft\WinGet\Links"
 set "PROGRAM_FILES_DIR=%ProgramFiles%"
@@ -29,8 +32,7 @@ if %errorlevel% equ 0 (
     goto :CHECK_FFMPEG
 ) else (
     echo [INSTALLING] ImageMagick not found. Installing now...
-    :: FIXED: Combined onto a single line so it executes correctly
-    winget install --id ImageMagick.ImageMagick
+    winget install --id ImageMagick.ImageMagick --exact --accept-source-agreements --accept-package-agreements --silent
     goto :CHECK_FFMPEG
 )
 
@@ -42,7 +44,8 @@ if %errorlevel% equ 0 (
     goto :PROCEED_NEXT
 ) else (
     echo [INSTALLING] Gyan.FFmpeg not found. Installing now...
-    winget install --id Gyan.FFmpeg
+    :: REMOVED custom --location to prevent "Access is denied" on portable extraction
+    winget install --id Gyan.FFmpeg --exact --accept-source-agreements --accept-package-agreements --silent
     goto :PROCEED_NEXT
 )
 
@@ -53,15 +56,13 @@ echo ===========================================================================
 echo Running next steps...
 
 :: -------------------------------------------------------------------------
-:: HOW TO USE THE TOOLS IN THE REST OF YOUR SCRIPT:
-:: Since %PATH% isn't refreshed, tell CMD exactly where the files live:
+:: HOW THE TOOLS ARE LOCATED DYNAMICALLY:
 :: -------------------------------------------------------------------------
 
-:: For FFmpeg (winget drops it into the local user links folder):
+:: For FFmpeg (Default portable fallback mapping):
 set "FFMPEG_CMD=%WINGET_LINKS_DIR%\ffmpeg.exe"
 
-:: For ImageMagick (typically installs to Program Files):
-:: We search the directory dynamically for the executable name to ignore version numbers
+:: For ImageMagick (Native machine path):
 for /d %%D in ("%PROGRAM_FILES_DIR%\ImageMagick*") do set "MAGICK_CMD=%%D\magick.exe"
 
 :: --- I. Processing Data From MICA in a year ---
