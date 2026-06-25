@@ -6,13 +6,13 @@ An automated Windows batch utility designed for **Stasiun Geofisika Alor** to ex
 
 ## 🚀 Features
 
-* [cite_start]**Auto-Dependency Management:** Checks for and automatically installs missing tools (`ImageMagick` and `FFmpeg`) using Windows Package Manager (`winget`).
-* [cite_start]**Dynamic Pathing:** Smart-scans installation directories to execute tools without relying on rigid global system environment `%PATH%` variables[cite: 4, 5].
-* [cite_start]**Automated Data Extraction:** Seamlessly extracts precise sunrise/sunset timings from multi-location MICA data spreadsheets (`.csv`)[cite: 7, 10, 11].
-* [cite_start]**BOM & Quote Cleanup:** Smart data formatting cleans up hidden Byte Order Marks (BOM) and unwanted formatting artifacts before rendering[cite: 11, 17].
-* [cite_start]**Localization:** Automatically computes a rolling 7-day calendar view formatted elegantly in Indonesian (`id-ID`)[cite: 13].
-* [cite_start]**Context-Aware Styling:** Dynamically alternates between video assets (`base_ganjil` / `base_genap`) depending on whether the target month is odd or even[cite: 13, 14].
-* [cite_start]**Hardware Acceleration Ready:** Built-in dual-pipeline script supports both universal CPU (`libx264`) and Nvidia GPU-accelerated encoding (`h264_nvenc`)[cite: 48, 49].
+* **Auto-Dependency Management:** Checks for and automatically installs missing tools (`ImageMagick` and `FFmpeg`) using Windows Package Manager (`winget`).
+* **Dynamic Pathing:** Smart-scans installation directories to execute tools without relying on rigid global system environment `%PATH%` variables.
+* **Automated Data Extraction:** Seamlessly extracts precise sunrise/sunset timings from multi-location MICA data spreadsheets (`.csv`).
+* **BOM & Quote Cleanup:** Smart data formatting cleans up hidden Byte Order Marks (BOM) and unwanted formatting artifacts before rendering.
+* **Localization:** Automatically computes a rolling 7-day calendar view formatted elegantly in Indonesian (`id-ID`).
+* **Context-Aware Styling:** Dynamically alternates between video assets (`base_ganjil` / `base_genap`) depending on whether the target month is odd or even.
+* **Hardware Acceleration Ready:** Built-in dual-pipeline script supports both universal CPU (`libx264`) and Nvidia GPU-accelerated encoding (`h264_nvenc`).
 
 ---
 
