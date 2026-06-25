@@ -19,14 +19,18 @@ set "OUTPUT_DIR=%LOCATION%\Output"
 
 :: --- 0. Check for FFmpeg and ImageMagick ---
 
+:: Define standard winget/Windows execution folders directly
+set "WINGET_LINKS_DIR=%USERPROFILE%\AppData\Local\Microsoft\WinGet\Links"
+set "PROGRAM_FILES_DIR=%ProgramFiles%"
+
 :: 1. Check for ImageMagick
 winget list --id ImageMagick.ImageMagick >nul 2>&1
 if %errorlevel% equ 0 (
     echo [FOUND] ImageMagick is installed.
     goto :CHECK_FFMPEG
 ) else (
-    :: This acts as our "elif/else" abort trigger
-    winget install ImageMagick.Q16 --exact --accept-source-agreements --accept-package-agreements
+    echo [INSTALLING] ImageMagick not found. Installing now...
+    winget install --id ImageMagick.ImageMagick --exact --accept-source-agreements --accept-package-agreements --silent
     goto :CHECK_FFMPEG
 )
 
@@ -37,7 +41,8 @@ if %errorlevel% equ 0 (
     echo [FOUND] Gyan.FFmpeg is installed.
     goto :PROCEED_NEXT
 ) else (
-    winget install -e --id Gyan.FFmpeg --exact --accept-source-agreements --accept-package-agreements
+    echo [INSTALLING] Gyan.FFmpeg not found. Installing now...
+    winget install --id Gyan.FFmpeg --exact --accept-source-agreements --accept-package-agreements --silent
     goto :PROCEED_NEXT
 )
 
@@ -46,6 +51,29 @@ echo ===========================================================================
 echo [0/6] All requirements met. Starting next program...
 echo =======================================================================================================================
 echo Running next steps...
+
+:: -------------------------------------------------------------------------
+:: HOW TO USE THE TOOLS IN THE REST OF YOUR SCRIPT:
+:: Since %PATH% isn't refreshed, tell CMD exactly where the files live:
+:: -------------------------------------------------------------------------
+
+:: For FFmpeg (winget drops it into the local user links folder):
+set "FFMPEG_CMD=%WINGET_LINKS_DIR%\ffmpeg.exe"
+
+:: For ImageMagick (typically installs to Program Files):
+:: We search the directory dynamically for the executable name to ignore version numbers
+for /d %%D in ("%PROGRAM_FILES_DIR%\ImageMagick*") do set "MAGICK_CMD=%%D\magick.exe"
+
+:: --- Example Usage ---
+:: Instead of writing: ffmpeg -i input.mp4 output.mp3
+:: You will write:    "!FFMPEG_CMD!" -i input.mp4 output.mp3
+
+:: Instead of writing: magick input.png output.jpg
+:: You will write:    "!MAGICK_CMD!" input.png output.jpg
+
+echo Testing paths...
+echo FFmpeg Location: "!FFMPEG_CMD!"
+echo ImageMagick Location: "!MAGICK_CMD!"
 
 :: --- I. Processing Data From MICA in a year ---
 
@@ -58,6 +86,7 @@ if errorlevel 1 (
 )
 
 :: Prompt you to type the word
+echo =======================================================================================================================
 echo Terbit Terbenam Otomatis
 set /p SEARCH_WORD="Input the date (e.g.: Mar,09): "
 
@@ -228,7 +257,7 @@ set IMAGES=-loop 1 -i "%OUTPUT_DIR%\cover_temp.png" -loop 1 -i "%OUTPUT_DIR%\cov
 
 :: Run the command
 :: Note: Using !FILTER_FILE! inside quotes for the filter_complex_script option
-ffmpeg -y -hwaccel cuda %BASE% %IMAGES% -filter_complex_script "!FILTER_FILE!" -c:a copy -c:v h264_nvenc -preset p6 -rc vbr -cq 20 -pix_fmt yuv420p -t 34.19 "%OUTPUT_DIR%\!DATE_TEXT!.mp4"
+!FFMPEG_CMD! -y -hwaccel cuda %BASE% %IMAGES% -filter_complex_script "!FILTER_FILE!" -c:a copy -c:v h264_nvenc -preset p6 -rc vbr -cq 20 -pix_fmt yuv420p -t 34.19 "%OUTPUT_DIR%\!DATE_TEXT!.mp4"
 
 echo =======================================================================================================================
 echo [5/6] Process complete! Check the folder for %DATE_TEXT%.mp4.
