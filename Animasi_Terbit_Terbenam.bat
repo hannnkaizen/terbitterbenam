@@ -2,6 +2,9 @@
 setlocal enabledelayedexpansion
 
 :: This program was created by Gemini 3 and assembled by rhh to enhance the operations of Stasiun Geofisika Alor.
+
+echo Starting..
+
 :: Location of the project folder (change this to your actual path)
 set "LOCATION=%~dp0"
 
@@ -32,7 +35,8 @@ if %errorlevel% equ 0 (
     goto :CHECK_FFMPEG
 ) else (
     echo [INSTALLING] ImageMagick not found. Installing now...
-    winget install --id ImageMagick.ImageMagick --exact --accept-source-agreements --accept-package-agreements --silent
+    echo y | winget install --id ImageMagick.ImageMagick --exact
+    :: winget install --id ImageMagick.ImageMagick --exact --accept-source-agreements --accept-package-agreements --silent
     goto :CHECK_FFMPEG
 )
 
@@ -44,7 +48,8 @@ if %errorlevel% equ 0 (
     goto :PROCEED_NEXT
 ) else (
     echo [INSTALLING] Gyan.FFmpeg not found. Installing now...
-    winget install --id Gyan.FFmpeg --exact --accept-source-agreements --accept-package-agreements --silent
+    echo y | winget install --id Gyan.FFmpeg --exact
+    ::winget install --id Gyan.FFmpeg --exact --accept-source-agreements --accept-package-agreements --silent
     goto :PROCEED_NEXT
 )
 
