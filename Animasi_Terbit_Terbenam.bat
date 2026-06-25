@@ -271,7 +271,12 @@ set IMAGES=-loop 1 -i "%OUTPUT_DIR%\cover_temp.png" -loop 1 -i "%OUTPUT_DIR%\cov
 
 :: Run the command
 :: Note: Using !FILTER_FILE! inside quotes for the filter_complex_script option
-!FFMPEG_CMD! -y -hwaccel cuda %BASE% %IMAGES% -filter_complex_script "!FILTER_FILE!" -c:a copy -c:v h264_nvenc -preset p6 -rc vbr -cq 20 -pix_fmt yuv420p -t 34.19 "%OUTPUT_DIR%\!DATE_TEXT!.mp4"
+
+::If you want to use hardware acceleration (Especially for GTX or RTX gpu cards), uncomment the first line and comment the second line below. Adjust the preset and other parameters as needed.
+::!FFMPEG_CMD! -y -hwaccel cuda %BASE% %IMAGES% -filter_complex_script "!FILTER_FILE!" -c:a copy -c:v h264_nvenc -preset p6 -rc vbr -cq 20 -pix_fmt yuv420p -t 34.19 "%OUTPUT_DIR%\!DATE_TEXT!.mp4"
+
+:: Run the command (Universal CPU encoding - works on any gpu or cpu)
+!FFMPEG_CMD! -y %BASE% %IMAGES% -filter_complex_script "!FILTER_FILE!" -c:a copy -c:v libx264 -crf 20 -preset medium -pix_fmt yuv420p -t 34.19 "%OUTPUT_DIR%\!DATE_TEXT!.mp4"
 
 echo =======================================================================================================================
 echo [5/6] Process complete! Check the folder for %DATE_TEXT%.mp4.
