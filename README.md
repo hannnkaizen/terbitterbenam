@@ -39,7 +39,16 @@ Before running the script, organize your repository directory as follows:
 ## 🛠️ Prerequisites
 The script will attempt to install these automatically via winget if missing:  
 * ImageMagick (For dynamic typography rendering onto transparent canvases)   
-* Gyan FFmpeg (For high-fidelity video timeline merging)   
+* Gyan FFmpeg (For high-fidelity video timeline merging)
+
+## ⬇️ How to Install
+1. You need git to download the program. Run cmd (windows + R) then cmd, hit enter. Install git by run this command.
+> winget install -e --id Gyan.FFmpeg --exact
+
+2. Once the git has installed, clone this repository to your local pc
+> git clone https://github.com/hannnkaizen/terbitterbenam.git
+
+3. Open the cloned folder and run Animasi_Terbit_Terbenam.bat
 
 ## 💻 How to Use
 1. Prepare Data: Place your updated location CSV files inside the Source/ directory.
