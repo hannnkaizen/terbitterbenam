@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 :: This program was created by Gemini 3 and assembled by rhh to enhance the operations of Stasiun Geofisika Alor.
 
 :: Location of the project folder (change this to your actual path)
-set "LOCATION=D:\TITIPAN_KITA\RAIHAN\Git\terbitterbenam"
+set "LOCATION=%~dp0"
 
 :: Convert backslashes to forward slashes for ImageMagick to prevent escape character issues (\T, \R)
 set "FONT_DIR=%LOCATION%\Fonts"
