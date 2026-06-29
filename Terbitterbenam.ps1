@@ -169,7 +169,7 @@ Write-Host "Variable BASE_VIDEO is set to: $BASE_VIDEO"
 Write-Host "Text to print: $DATE_TEXT"
 
 Write-Host "Generating cover image..."
-& $MAGICK_CMD -size 1080x1080 canvas:transparent -font $FONT_HEADER -pointsize 45 -gravity center -fill "#fac016" -annotate 0x0+45+50 "$DATE_TEXT" "$OUTPUT_DIR\cover_temp.png"
+& $MAGICK_CMD -size 1080x1080 canvas:transparent -font $FONT_HEADER -pointsize 56 -gravity center -fill "#fac016" -annotate 0x0+45+90 "$DATE_TEXT" "$OUTPUT_DIR\cover_temp.png"
 
 Write-Host "======================================================================================================================="
 Write-Host "[3/6] Generated cover.png successfully! Generating content images for each CSV file..."
