@@ -230,7 +230,10 @@ foreach ($f in $csvFiles) {
         $magickArgs += @("-font", $FONT_BODY, "-annotate", "0x0+330+$($Y[$_])", $TERBENAM[$_])
     }
     
-    $outputImgName = $f.Name.Replace("_temp1.csv", ".png")
+    # ... (inside the foreach ($f in $csvFiles) loop) ...
+    
+    # FIX: Preserve '_temp1' so it matches what filters.txt expects
+    $outputImgName = $f.Name.Replace(".csv", ".png") 
     $magickArgs += "$OUTPUT_DIR\$outputImgName"
     
     # Execute ImageMagick cleanly
